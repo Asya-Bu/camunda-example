@@ -1,0 +1,503 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" id="Definitions_0yy8trw" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="4.2.0">
+  <bpmn:collaboration id="Collaboration_15f0ojp">
+    <bpmn:participant id="Participant_0dauyjk" name="Ежемесячное премирование сотрудников" processRef="idk" />
+  </bpmn:collaboration>
+  <bpmn:process id="idk" isExecutable="true" camunda:candidateStarterGroups="group1" camunda:candidateStarterUsers="demo,u2">
+    <bpmn:laneSet id="LaneSet_01h6c64">
+      <bpmn:lane id="Lane_0p6fyy5" name="Сотрудник группы расчета">
+        <bpmn:flowNodeRef>StartEvent_1</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>a2_createRequestForKPI</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>a1_createBonusList</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>a4_loadCalculationParams</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>a5_calculateBonus</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Gateway_07jz84q</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Event_1mgy0dt</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>a8_createDocument</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Gateway_0sg0g01</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>a9_signDocument</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>a10_sendToArchive</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>a7_sendToSAP</bpmn:flowNodeRef>
+      </bpmn:lane>
+      <bpmn:lane id="Lane_0wf727i" name="Руководитель подразделения">
+        <bpmn:flowNodeRef>a3_enterKPI</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>a6_approveCalculation</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Gateway_140w11i</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Event_1as8wr3</bpmn:flowNodeRef>
+      </bpmn:lane>
+      <bpmn:lane id="Lane_18ixl9v" name="Эксперт">
+        <bpmn:flowNodeRef>a11_sendPaymentRequest</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Gateway_0nsle17</bpmn:flowNodeRef>
+      </bpmn:lane>
+      <bpmn:lane id="Lane_0bhlqnp" name="Казначей">
+        <bpmn:flowNodeRef>a12_openFinacing</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Event_1f0pjzr</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Gateway_1xbj3t7</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Gateway_1ccneee</bpmn:flowNodeRef>
+      </bpmn:lane>
+    </bpmn:laneSet>
+    <bpmn:startEvent id="StartEvent_1" name="28го числа каждого месяца">
+      <bpmn:outgoing>Flow_0lwwr3o</bpmn:outgoing>
+      <bpmn:timerEventDefinition id="TimerEventDefinition_069i5dg">
+        <bpmn:timeCycle xsi:type="bpmn:tFormalExpression">R12/2020-09-27T18:05:00Z/P1M</bpmn:timeCycle>
+      </bpmn:timerEventDefinition>
+    </bpmn:startEvent>
+    <bpmn:userTask id="a3_enterKPI" name="Предоставить показатели">
+      <bpmn:extensionElements>
+        <camunda:formData>
+          <camunda:formField id="KPI1" label="Прирост клиентов" type="long" />
+          <camunda:formField id="KPI2" label="Количество людей, повторно осуществивших покупку" type="long" />
+          <camunda:formField id="KPI3" label="Количество положительных отзывов" type="long" />
+        </camunda:formData>
+        <camunda:inputOutput>
+          <camunda:outputParameter name="KPI1_fact">${KPI1}</camunda:outputParameter>
+          <camunda:outputParameter name="KPI2_fact">${KPI2}</camunda:outputParameter>
+          <camunda:outputParameter name="KPI3_fact">${KPI3}</camunda:outputParameter>
+        </camunda:inputOutput>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_1rjumg6</bpmn:incoming>
+      <bpmn:outgoing>Flow_1mjon0u</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:userTask id="a2_createRequestForKPI" name="Создать заявку на предоставление показателей">
+      <bpmn:extensionElements>
+        <camunda:formData>
+          <camunda:formField id="employeeList" label="Список сотрудников" type="string" />
+          <camunda:formField id="businessUnit" label="Подразделение" type="string" />
+          <camunda:formField id="bonusType" label="Тип премии" type="enum">
+            <camunda:value id="Value_041j9j3" name="производственная" />
+            <camunda:value id="Value_0qhpid0" name="непроизводственная" />
+          </camunda:formField>
+          <camunda:formField id="period" label="Период" type="string" />
+          <camunda:formField id="reason" label="Основание для выплаты" type="enum">
+            <camunda:value id="Value_27be9g3" name="хорошо работал" />
+            <camunda:value id="Value_18bctvo" name="отлично работал" />
+            <camunda:value id="Value_1l598kf" name="великолепно работал" />
+          </camunda:formField>
+        </camunda:formData>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_1f1tdw9</bpmn:incoming>
+      <bpmn:outgoing>Flow_1rjumg6</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:manualTask id="a1_createBonusList" name="Сформировать список сотрудников">
+      <bpmn:extensionElements>
+        <camunda:inputOutput>
+          <camunda:outputParameter name="Output_3jebd7k" />
+        </camunda:inputOutput>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_0lwwr3o</bpmn:incoming>
+      <bpmn:outgoing>Flow_1f1tdw9</bpmn:outgoing>
+    </bpmn:manualTask>
+    <bpmn:sequenceFlow id="Flow_1mjon0u" sourceRef="a3_enterKPI" targetRef="a4_loadCalculationParams" />
+    <bpmn:sequenceFlow id="Flow_0lwwr3o" sourceRef="StartEvent_1" targetRef="a1_createBonusList" />
+    <bpmn:sequenceFlow id="Flow_1f1tdw9" sourceRef="a1_createBonusList" targetRef="a2_createRequestForKPI" />
+    <bpmn:sequenceFlow id="Flow_1rjumg6" sourceRef="a2_createRequestForKPI" targetRef="a3_enterKPI" />
+    <bpmn:serviceTask id="a4_loadCalculationParams" name="Выгрузить данные для расчета">
+      <bpmn:extensionElements>
+        <camunda:connector>
+          <camunda:inputOutput>
+            <camunda:inputParameter name="url">http://cpd-rules-msa-core-dev.os-dev.x5.ru/api/v1/offers?store_id=Y242</camunda:inputParameter>
+            <camunda:inputParameter name="method">GET</camunda:inputParameter>
+            <camunda:inputParameter name="headers">
+              <camunda:map>
+                <camunda:entry key="Accept">application/json</camunda:entry>
+              </camunda:map>
+            </camunda:inputParameter>
+            <camunda:outputParameter name="KPI1_plan">${S(response).prop("offers").elements().get(0).prop("benefits").elements().get(0).prop("range").prop("range_id").numberValue()}</camunda:outputParameter>
+            <camunda:outputParameter name="KPI2_plan">${S(response).prop("offers").elements().get(1).prop("benefits").elements().get(0).prop("range").prop("range_id").numberValue()}</camunda:outputParameter>
+            <camunda:outputParameter name="KPI3_plan">${S(response).prop("offers").elements().get(2).prop("benefits").elements().get(0).prop("range").prop("range_id").numberValue()}</camunda:outputParameter>
+          </camunda:inputOutput>
+          <camunda:connectorId>http-connector</camunda:connectorId>
+        </camunda:connector>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_1mjon0u</bpmn:incoming>
+      <bpmn:outgoing>Flow_0aotd3d</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:serviceTask id="a5_calculateBonus" name="Выполнить расчет премии" camunda:expression="#{(0.3*KPI1_fact/KPI1_plan + 0.3*KPI2_fact/KPI2_plan + 0.4*KPI3_fact/KPI3_plan)*1500000}" camunda:resultVariable="bonus">
+      <bpmn:extensionElements>
+        <camunda:inputOutput>
+          <camunda:outputParameter name="bonus_amount">${bonus}</camunda:outputParameter>
+        </camunda:inputOutput>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_0aotd3d</bpmn:incoming>
+      <bpmn:outgoing>Flow_1oppa4p</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:sequenceFlow id="Flow_0aotd3d" sourceRef="a4_loadCalculationParams" targetRef="a5_calculateBonus" />
+    <bpmn:sequenceFlow id="Flow_1oppa4p" sourceRef="a5_calculateBonus" targetRef="a6_approveCalculation" />
+    <bpmn:sequenceFlow id="Flow_1u7ebws" name="G2.1 SAP доступен" sourceRef="Gateway_07jz84q" targetRef="a8_createDocument">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${status.toString()=="200"}</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="Flow_0ffo0kx" name="G2.2 SAP недоступен" sourceRef="Gateway_07jz84q" targetRef="Event_1mgy0dt">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${status.toString()!="200"}</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="Flow_1idiyfk" sourceRef="a6_approveCalculation" targetRef="Gateway_140w11i" />
+    <bpmn:userTask id="a6_approveCalculation" name="Согласовать расчетный файл">
+      <bpmn:extensionElements>
+        <camunda:formData>
+          <camunda:formField id="approval" label="Согласовано?" type="boolean" />
+          <camunda:formField id="bonus_amount" label="Сумма премии" type="string" defaultValue="${bonus}" />
+        </camunda:formData>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_1oppa4p</bpmn:incoming>
+      <bpmn:outgoing>Flow_1idiyfk</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:exclusiveGateway id="Gateway_140w11i" name="G1">
+      <bpmn:incoming>Flow_1idiyfk</bpmn:incoming>
+      <bpmn:outgoing>Flow_0w5u9ap</bpmn:outgoing>
+      <bpmn:outgoing>Flow_12dq9nq</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:sequenceFlow id="Flow_0w5u9ap" name="G1.2 Файл не согласован" sourceRef="Gateway_140w11i" targetRef="Event_1as8wr3">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${approval==false}</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="Flow_12dq9nq" name="G1.1 Файл согласован" sourceRef="Gateway_140w11i" targetRef="a7_sendToSAP">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${approval==true}</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:endEvent id="Event_1as8wr3">
+      <bpmn:incoming>Flow_0w5u9ap</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:exclusiveGateway id="Gateway_07jz84q" name="G2">
+      <bpmn:incoming>Flow_1m79qls</bpmn:incoming>
+      <bpmn:outgoing>Flow_1u7ebws</bpmn:outgoing>
+      <bpmn:outgoing>Flow_0ffo0kx</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:sequenceFlow id="Flow_1m79qls" sourceRef="a7_sendToSAP" targetRef="Gateway_07jz84q" />
+    <bpmn:endEvent id="Event_1mgy0dt">
+      <bpmn:incoming>Flow_0ffo0kx</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:serviceTask id="a8_createDocument" name="Сформировать приказ">
+      <bpmn:extensionElements>
+        <camunda:connector>
+          <camunda:inputOutput>
+            <camunda:inputParameter name="url">http://cpd-rules-msa-core-dev.os-dev.x5.ru/api/v1/offers?store_id=Y242</camunda:inputParameter>
+            <camunda:inputParameter name="method">GET</camunda:inputParameter>
+            <camunda:inputParameter name="headers">
+              <camunda:map />
+            </camunda:inputParameter>
+          </camunda:inputOutput>
+          <camunda:connectorId>http-connector</camunda:connectorId>
+        </camunda:connector>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_1u7ebws</bpmn:incoming>
+      <bpmn:outgoing>Flow_10ltgkt</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:sequenceFlow id="Flow_10ltgkt" sourceRef="a8_createDocument" targetRef="Gateway_0sg0g01" />
+    <bpmn:parallelGateway id="Gateway_0sg0g01">
+      <bpmn:incoming>Flow_10ltgkt</bpmn:incoming>
+      <bpmn:outgoing>Flow_1837uky</bpmn:outgoing>
+      <bpmn:outgoing>Flow_13g8qxv</bpmn:outgoing>
+    </bpmn:parallelGateway>
+    <bpmn:sequenceFlow id="Flow_1837uky" sourceRef="Gateway_0sg0g01" targetRef="a9_signDocument" />
+    <bpmn:userTask id="a9_signDocument" name="Подписать приказ">
+      <bpmn:extensionElements>
+        <camunda:formData>
+          <camunda:formField id="signature" label="Подпись" type="string" />
+        </camunda:formData>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_1837uky</bpmn:incoming>
+      <bpmn:outgoing>Flow_18p427x</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:sequenceFlow id="Flow_18p427x" sourceRef="a9_signDocument" targetRef="a10_sendToArchive" />
+    <bpmn:serviceTask id="a10_sendToArchive" name="Сохранить приказ в архиве">
+      <bpmn:extensionElements>
+        <camunda:connector>
+          <camunda:inputOutput>
+            <camunda:inputParameter name="url">http://cpd-rules-msa-core-dev.os-dev.x5.ru/api/v1/offers?store_id=Y242</camunda:inputParameter>
+            <camunda:inputParameter name="method">GET</camunda:inputParameter>
+            <camunda:inputParameter name="headers">
+              <camunda:map />
+            </camunda:inputParameter>
+          </camunda:inputOutput>
+          <camunda:connectorId>http-connector</camunda:connectorId>
+        </camunda:connector>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_18p427x</bpmn:incoming>
+      <bpmn:outgoing>Flow_0i2kdih</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:sequenceFlow id="Flow_13g8qxv" sourceRef="Gateway_0sg0g01" targetRef="Gateway_0nsle17" />
+    <bpmn:sequenceFlow id="Flow_00u9lbr" name="G3.1 премия &#60; =5млн" sourceRef="Gateway_0nsle17" targetRef="a11_sendPaymentRequest">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${bonus&lt;=5000000}</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:userTask id="a11_sendPaymentRequest" name="Направить ПД на выплату">
+      <bpmn:extensionElements>
+        <camunda:formData>
+          <camunda:formField id="bonus_amount" label="Сумма премии" type="string" defaultValue="${bonus}" />
+          <camunda:formField id="employees" label="Сотрудники" type="string" defaultValue="${employeeList}" />
+          <camunda:formField id="approve" label="Оформить выплату" type="boolean" />
+        </camunda:formData>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_00u9lbr</bpmn:incoming>
+      <bpmn:outgoing>Flow_0qde7oe</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:sequenceFlow id="Flow_0ln39lz" name="G3.2 премия &#62; 5 млн" sourceRef="Gateway_0nsle17" targetRef="a12_openFinacing">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${bonus&gt;5000000}</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:userTask id="a12_openFinacing" name="Выделить средства и провести оплату">
+      <bpmn:extensionElements>
+        <camunda:formData>
+          <camunda:formField id="assignFinancing" label="Выделить средства" type="boolean" />
+          <camunda:formField id="amount" label="Сколько денег выделить" type="string" defaultValue="${bonus - 5000000}" />
+        </camunda:formData>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_0ln39lz</bpmn:incoming>
+      <bpmn:outgoing>Flow_04nilpy</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:sequenceFlow id="Flow_04nilpy" sourceRef="a12_openFinacing" targetRef="Gateway_1xbj3t7" />
+    <bpmn:sequenceFlow id="Flow_0i2kdih" sourceRef="a10_sendToArchive" targetRef="Gateway_1ccneee" />
+    <bpmn:sequenceFlow id="Flow_0yfo170" sourceRef="Gateway_1xbj3t7" targetRef="Gateway_1ccneee" />
+    <bpmn:sequenceFlow id="Flow_1joor0o" sourceRef="Gateway_1ccneee" targetRef="Event_1f0pjzr" />
+    <bpmn:endEvent id="Event_1f0pjzr">
+      <bpmn:incoming>Flow_1joor0o</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:exclusiveGateway id="Gateway_1xbj3t7">
+      <bpmn:incoming>Flow_04nilpy</bpmn:incoming>
+      <bpmn:incoming>Flow_0qde7oe</bpmn:incoming>
+      <bpmn:outgoing>Flow_0yfo170</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:parallelGateway id="Gateway_1ccneee">
+      <bpmn:incoming>Flow_0yfo170</bpmn:incoming>
+      <bpmn:incoming>Flow_0i2kdih</bpmn:incoming>
+      <bpmn:outgoing>Flow_1joor0o</bpmn:outgoing>
+    </bpmn:parallelGateway>
+    <bpmn:sequenceFlow id="Flow_0qde7oe" sourceRef="a11_sendPaymentRequest" targetRef="Gateway_1xbj3t7" />
+    <bpmn:exclusiveGateway id="Gateway_0nsle17" name="G3">
+      <bpmn:incoming>Flow_13g8qxv</bpmn:incoming>
+      <bpmn:outgoing>Flow_00u9lbr</bpmn:outgoing>
+      <bpmn:outgoing>Flow_0ln39lz</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:serviceTask id="a7_sendToSAP" name="Отправить данные в SAP">
+      <bpmn:extensionElements>
+        <camunda:connector>
+          <camunda:inputOutput>
+            <camunda:inputParameter name="url">http://cpd-rules-msa-core-dev.os-dev.x5.ru/api/v1/offers?store_id=Y242</camunda:inputParameter>
+            <camunda:inputParameter name="method">GET</camunda:inputParameter>
+            <camunda:inputParameter name="headers">
+              <camunda:map />
+            </camunda:inputParameter>
+            <camunda:outputParameter name="status">${statusCode}</camunda:outputParameter>
+          </camunda:inputOutput>
+          <camunda:connectorId>http-connector</camunda:connectorId>
+        </camunda:connector>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_12dq9nq</bpmn:incoming>
+      <bpmn:outgoing>Flow_1m79qls</bpmn:outgoing>
+    </bpmn:serviceTask>
+  </bpmn:process>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_1">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="Collaboration_15f0ojp">
+      <bpmndi:BPMNShape id="Participant_0dauyjk_di" bpmnElement="Participant_0dauyjk" isHorizontal="true">
+        <dc:Bounds x="160" y="57" width="2188" height="793" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Lane_0bhlqnp_di" bpmnElement="Lane_0bhlqnp" isHorizontal="true">
+        <dc:Bounds x="190" y="750" width="2158" height="100" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Lane_18ixl9v_di" bpmnElement="Lane_18ixl9v" isHorizontal="true">
+        <dc:Bounds x="190" y="500" width="2158" height="250" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Lane_0wf727i_di" bpmnElement="Lane_0wf727i" isHorizontal="true">
+        <dc:Bounds x="190" y="310" width="2158" height="190" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Lane_0p6fyy5_di" bpmnElement="Lane_0p6fyy5" isHorizontal="true">
+        <dc:Bounds x="190" y="57" width="2158" height="253" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Flow_1m79qls_di" bpmnElement="Flow_1m79qls">
+        <di:waypoint x="1340" y="140" />
+        <di:waypoint x="1368" y="140" />
+        <di:waypoint x="1368" y="117" />
+        <di:waypoint x="1395" y="117" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_12dq9nq_di" bpmnElement="Flow_12dq9nq">
+        <di:waypoint x="1200" y="375" />
+        <di:waypoint x="1200" y="140" />
+        <di:waypoint x="1240" y="140" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1201" y="285" width="58" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0w5u9ap_di" bpmnElement="Flow_0w5u9ap">
+        <di:waypoint x="1225" y="400" />
+        <di:waypoint x="1342" y="400" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1245" y="406" width="70" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1idiyfk_di" bpmnElement="Flow_1idiyfk">
+        <di:waypoint x="1100" y="400" />
+        <di:waypoint x="1175" y="400" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0ffo0kx_di" bpmnElement="Flow_0ffo0kx">
+        <di:waypoint x="1420" y="142" />
+        <di:waypoint x="1420" y="230" />
+        <di:waypoint x="1542" y="230" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1460" y="196" width="59" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1u7ebws_di" bpmnElement="Flow_1u7ebws">
+        <di:waypoint x="1445" y="117" />
+        <di:waypoint x="1540" y="117" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1465" y="86" width="50" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1oppa4p_di" bpmnElement="Flow_1oppa4p">
+        <di:waypoint x="1050" y="157" />
+        <di:waypoint x="1050" y="360" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0aotd3d_di" bpmnElement="Flow_0aotd3d">
+        <di:waypoint x="940" y="117" />
+        <di:waypoint x="1000" y="117" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1rjumg6_di" bpmnElement="Flow_1rjumg6">
+        <di:waypoint x="560" y="157" />
+        <di:waypoint x="560" y="400" />
+        <di:waypoint x="630" y="400" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1f1tdw9_di" bpmnElement="Flow_1f1tdw9">
+        <di:waypoint x="460" y="117" />
+        <di:waypoint x="510" y="117" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0lwwr3o_di" bpmnElement="Flow_0lwwr3o">
+        <di:waypoint x="308" y="117" />
+        <di:waypoint x="360" y="117" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1mjon0u_di" bpmnElement="Flow_1mjon0u">
+        <di:waypoint x="730" y="400" />
+        <di:waypoint x="890" y="400" />
+        <di:waypoint x="890" y="160" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_10ltgkt_di" bpmnElement="Flow_10ltgkt">
+        <di:waypoint x="1640" y="117" />
+        <di:waypoint x="1695" y="117" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1837uky_di" bpmnElement="Flow_1837uky">
+        <di:waypoint x="1745" y="117" />
+        <di:waypoint x="1800" y="117" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_18p427x_di" bpmnElement="Flow_18p427x">
+        <di:waypoint x="1900" y="117" />
+        <di:waypoint x="1960" y="117" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_13g8qxv_di" bpmnElement="Flow_13g8qxv">
+        <di:waypoint x="1720" y="142" />
+        <di:waypoint x="1720" y="615" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_00u9lbr_di" bpmnElement="Flow_00u9lbr">
+        <di:waypoint x="1745" y="640" />
+        <di:waypoint x="1808" y="640" />
+        <di:waypoint x="1808" y="550" />
+        <di:waypoint x="1870" y="550" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1782" y="526" width="75" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0ln39lz_di" bpmnElement="Flow_0ln39lz">
+        <di:waypoint x="1745" y="640" />
+        <di:waypoint x="1810" y="640" />
+        <di:waypoint x="1810" y="800" />
+        <di:waypoint x="1870" y="800" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1778" y="806" width="84" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_04nilpy_di" bpmnElement="Flow_04nilpy">
+        <di:waypoint x="1970" y="800" />
+        <di:waypoint x="2065" y="800" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0i2kdih_di" bpmnElement="Flow_0i2kdih">
+        <di:waypoint x="2060" y="117" />
+        <di:waypoint x="2190" y="117" />
+        <di:waypoint x="2190" y="775" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0yfo170_di" bpmnElement="Flow_0yfo170">
+        <di:waypoint x="2115" y="800" />
+        <di:waypoint x="2165" y="800" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1joor0o_di" bpmnElement="Flow_1joor0o">
+        <di:waypoint x="2215" y="800" />
+        <di:waypoint x="2242" y="800" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0qde7oe_di" bpmnElement="Flow_0qde7oe">
+        <di:waypoint x="1970" y="550" />
+        <di:waypoint x="2090" y="550" />
+        <di:waypoint x="2090" y="775" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="Event_00cn9ly_di" bpmnElement="StartEvent_1">
+        <dc:Bounds x="272" y="99" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="249" y="142" width="82" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0a49nkr_di" bpmnElement="a3_enterKPI">
+        <dc:Bounds x="630" y="360" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_044ootv_di" bpmnElement="a2_createRequestForKPI">
+        <dc:Bounds x="510" y="77" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0mj2ap0_di" bpmnElement="a1_createBonusList">
+        <dc:Bounds x="360" y="77" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1ejjbmk_di" bpmnElement="a4_loadCalculationParams">
+        <dc:Bounds x="840" y="77" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0yikpd5_di" bpmnElement="a5_calculateBonus">
+        <dc:Bounds x="1000" y="77" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0gj60xa_di" bpmnElement="a6_approveCalculation">
+        <dc:Bounds x="1000" y="360" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_140w11i_di" bpmnElement="Gateway_140w11i" isMarkerVisible="true">
+        <dc:Bounds x="1175" y="375" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1193" y="432" width="15" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_1as8wr3_di" bpmnElement="Event_1as8wr3">
+        <dc:Bounds x="1342" y="382" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_07jz84q_di" bpmnElement="Gateway_07jz84q" isMarkerVisible="true">
+        <dc:Bounds x="1395" y="92" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1413" y="73" width="15" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_1mgy0dt_di" bpmnElement="Event_1mgy0dt">
+        <dc:Bounds x="1542" y="212" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_18qs5v1_di" bpmnElement="a8_createDocument">
+        <dc:Bounds x="1540" y="77" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_11yggd3_di" bpmnElement="Gateway_0sg0g01">
+        <dc:Bounds x="1695" y="92" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1fq0tmr_di" bpmnElement="a9_signDocument">
+        <dc:Bounds x="1800" y="77" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1pkvwzl_di" bpmnElement="a10_sendToArchive">
+        <dc:Bounds x="1960" y="77" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1jlkeuv_di" bpmnElement="a11_sendPaymentRequest">
+        <dc:Bounds x="1870" y="510" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1szfner_di" bpmnElement="a12_openFinacing">
+        <dc:Bounds x="1870" y="760" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_1f0pjzr_di" bpmnElement="Event_1f0pjzr">
+        <dc:Bounds x="2242" y="782" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_1sjqujv_di" bpmnElement="Gateway_1xbj3t7" isMarkerVisible="true">
+        <dc:Bounds x="2065" y="775" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_00jte0f_di" bpmnElement="Gateway_1ccneee">
+        <dc:Bounds x="2165" y="775" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_0nsle17_di" bpmnElement="Gateway_0nsle17" isMarkerVisible="true">
+        <dc:Bounds x="1695" y="615" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1669.5" y="633" width="15" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_17x4fk8_di" bpmnElement="a7_sendToSAP">
+        <dc:Bounds x="1240" y="100" width="100" height="80" />
+      </bpmndi:BPMNShape>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>
