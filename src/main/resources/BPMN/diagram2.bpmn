@@ -42,7 +42,7 @@
         <bpmn:timeCycle xsi:type="bpmn:tFormalExpression">R12/2020-09-27T18:05:00Z/P1M</bpmn:timeCycle>
       </bpmn:timerEventDefinition>
     </bpmn:startEvent>
-    <bpmn:userTask id="a3_enterKPI" name="Предоставить показатели">
+    <bpmn:userTask id="a3_enterKPI" name="3. Предоставить показатели">
       <bpmn:extensionElements>
         <camunda:formData>
           <camunda:formField id="KPI1" label="Прирост клиентов" type="long" />
@@ -58,7 +58,7 @@
       <bpmn:incoming>Flow_1rjumg6</bpmn:incoming>
       <bpmn:outgoing>Flow_1mjon0u</bpmn:outgoing>
     </bpmn:userTask>
-    <bpmn:userTask id="a2_createRequestForKPI" name="Создать заявку на предоставление показателей">
+    <bpmn:userTask id="a2_createRequestForKPI" name="2. Создать заявку на предоставление показателей">
       <bpmn:extensionElements>
         <camunda:formData>
           <camunda:formField id="employeeList" label="Список сотрудников" type="string" />
@@ -78,7 +78,7 @@
       <bpmn:incoming>Flow_1f1tdw9</bpmn:incoming>
       <bpmn:outgoing>Flow_1rjumg6</bpmn:outgoing>
     </bpmn:userTask>
-    <bpmn:manualTask id="a1_createBonusList" name="Сформировать список сотрудников">
+    <bpmn:manualTask id="a1_createBonusList" name="1. Сформировать список сотрудников">
       <bpmn:extensionElements>
         <camunda:inputOutput>
           <camunda:outputParameter name="Output_3jebd7k" />
@@ -91,7 +91,7 @@
     <bpmn:sequenceFlow id="Flow_0lwwr3o" sourceRef="StartEvent_1" targetRef="a1_createBonusList" />
     <bpmn:sequenceFlow id="Flow_1f1tdw9" sourceRef="a1_createBonusList" targetRef="a2_createRequestForKPI" />
     <bpmn:sequenceFlow id="Flow_1rjumg6" sourceRef="a2_createRequestForKPI" targetRef="a3_enterKPI" />
-    <bpmn:serviceTask id="a4_loadCalculationParams" name="Выгрузить данные для расчета">
+    <bpmn:serviceTask id="a4_loadCalculationParams" name="4. Выгрузить данные для расчета">
       <bpmn:extensionElements>
         <camunda:connector>
           <camunda:inputOutput>
@@ -112,7 +112,7 @@
       <bpmn:incoming>Flow_1mjon0u</bpmn:incoming>
       <bpmn:outgoing>Flow_0aotd3d</bpmn:outgoing>
     </bpmn:serviceTask>
-    <bpmn:serviceTask id="a5_calculateBonus" name="Выполнить расчет премии" camunda:expression="#{(0.3*KPI1_fact/KPI1_plan + 0.3*KPI2_fact/KPI2_plan + 0.4*KPI3_fact/KPI3_plan)*1500000}" camunda:resultVariable="bonus">
+    <bpmn:serviceTask id="a5_calculateBonus" name="5. Выполнить расчет премии" camunda:expression="#{(0.3*KPI1_fact/KPI1_plan + 0.3*KPI2_fact/KPI2_plan + 0.4*KPI3_fact/KPI3_plan)*1500000}" camunda:resultVariable="bonus">
       <bpmn:extensionElements>
         <camunda:inputOutput>
           <camunda:outputParameter name="bonus_amount">${bonus}</camunda:outputParameter>
@@ -130,7 +130,7 @@
       <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${status.toString()!="200"}</bpmn:conditionExpression>
     </bpmn:sequenceFlow>
     <bpmn:sequenceFlow id="Flow_1idiyfk" sourceRef="a6_approveCalculation" targetRef="Gateway_140w11i" />
-    <bpmn:userTask id="a6_approveCalculation" name="Согласовать расчетный файл">
+    <bpmn:userTask id="a6_approveCalculation" name="6. Согласовать расчетный файл">
       <bpmn:extensionElements>
         <camunda:formData>
           <camunda:formField id="approval" label="Согласовано?" type="boolean" />
@@ -163,7 +163,7 @@
     <bpmn:endEvent id="Event_1mgy0dt">
       <bpmn:incoming>Flow_0ffo0kx</bpmn:incoming>
     </bpmn:endEvent>
-    <bpmn:serviceTask id="a8_createDocument" name="Сформировать приказ">
+    <bpmn:serviceTask id="a8_createDocument" name="8. Сформировать приказ">
       <bpmn:extensionElements>
         <camunda:connector>
           <camunda:inputOutput>
@@ -186,7 +186,7 @@
       <bpmn:outgoing>Flow_13g8qxv</bpmn:outgoing>
     </bpmn:parallelGateway>
     <bpmn:sequenceFlow id="Flow_1837uky" sourceRef="Gateway_0sg0g01" targetRef="a9_signDocument" />
-    <bpmn:userTask id="a9_signDocument" name="Подписать приказ">
+    <bpmn:userTask id="a9_signDocument" name="9. Подписать приказ">
       <bpmn:extensionElements>
         <camunda:formData>
           <camunda:formField id="signature" label="Подпись" type="string" />
@@ -196,7 +196,7 @@
       <bpmn:outgoing>Flow_18p427x</bpmn:outgoing>
     </bpmn:userTask>
     <bpmn:sequenceFlow id="Flow_18p427x" sourceRef="a9_signDocument" targetRef="a10_sendToArchive" />
-    <bpmn:serviceTask id="a10_sendToArchive" name="Сохранить приказ в архиве">
+    <bpmn:serviceTask id="a10_sendToArchive" name="10Сохранить приказ в архиве">
       <bpmn:extensionElements>
         <camunda:connector>
           <camunda:inputOutput>
@@ -216,7 +216,7 @@
     <bpmn:sequenceFlow id="Flow_00u9lbr" name="G3.1 премия &#60; =5млн" sourceRef="Gateway_0nsle17" targetRef="a11_sendPaymentRequest">
       <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${bonus&lt;=5000000}</bpmn:conditionExpression>
     </bpmn:sequenceFlow>
-    <bpmn:userTask id="a11_sendPaymentRequest" name="Направить ПД на выплату">
+    <bpmn:userTask id="a11_sendPaymentRequest" name="11. Направить ПД на выплату">
       <bpmn:extensionElements>
         <camunda:formData>
           <camunda:formField id="bonus_amount" label="Сумма премии" type="string" defaultValue="${bonus}" />
@@ -230,7 +230,7 @@
     <bpmn:sequenceFlow id="Flow_0ln39lz" name="G3.2 премия &#62; 5 млн" sourceRef="Gateway_0nsle17" targetRef="a12_openFinacing">
       <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${bonus&gt;5000000}</bpmn:conditionExpression>
     </bpmn:sequenceFlow>
-    <bpmn:userTask id="a12_openFinacing" name="Выделить средства и провести оплату">
+    <bpmn:userTask id="a12_openFinacing" name="12. Выделить средства и провести оплату">
       <bpmn:extensionElements>
         <camunda:formData>
           <camunda:formField id="assignFinancing" label="Выделить средства" type="boolean" />
@@ -244,7 +244,7 @@
     <bpmn:sequenceFlow id="Flow_0i2kdih" sourceRef="a10_sendToArchive" targetRef="Gateway_1ccneee" />
     <bpmn:sequenceFlow id="Flow_0yfo170" sourceRef="Gateway_1xbj3t7" targetRef="Gateway_1ccneee" />
     <bpmn:sequenceFlow id="Flow_1joor0o" sourceRef="Gateway_1ccneee" targetRef="Event_1f0pjzr" />
-    <bpmn:endEvent id="Event_1f0pjzr">
+    <bpmn:endEvent id="Event_1f0pjzr" name="Премия выплачена">
       <bpmn:incoming>Flow_1joor0o</bpmn:incoming>
     </bpmn:endEvent>
     <bpmn:exclusiveGateway id="Gateway_1xbj3t7">
@@ -263,7 +263,7 @@
       <bpmn:outgoing>Flow_00u9lbr</bpmn:outgoing>
       <bpmn:outgoing>Flow_0ln39lz</bpmn:outgoing>
     </bpmn:exclusiveGateway>
-    <bpmn:serviceTask id="a7_sendToSAP" name="Отправить данные в SAP">
+    <bpmn:serviceTask id="a7_sendToSAP" name="7. Отправить данные в SAP">
       <bpmn:extensionElements>
         <camunda:connector>
           <camunda:inputOutput>
@@ -298,6 +298,62 @@
       <bpmndi:BPMNShape id="Lane_0p6fyy5_di" bpmnElement="Lane_0p6fyy5" isHorizontal="true">
         <dc:Bounds x="190" y="57" width="2158" height="253" />
       </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Flow_0qde7oe_di" bpmnElement="Flow_0qde7oe">
+        <di:waypoint x="1970" y="550" />
+        <di:waypoint x="2090" y="550" />
+        <di:waypoint x="2090" y="775" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1joor0o_di" bpmnElement="Flow_1joor0o">
+        <di:waypoint x="2215" y="800" />
+        <di:waypoint x="2242" y="800" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0yfo170_di" bpmnElement="Flow_0yfo170">
+        <di:waypoint x="2115" y="800" />
+        <di:waypoint x="2165" y="800" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0i2kdih_di" bpmnElement="Flow_0i2kdih">
+        <di:waypoint x="2060" y="117" />
+        <di:waypoint x="2190" y="117" />
+        <di:waypoint x="2190" y="775" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_04nilpy_di" bpmnElement="Flow_04nilpy">
+        <di:waypoint x="1970" y="800" />
+        <di:waypoint x="2065" y="800" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0ln39lz_di" bpmnElement="Flow_0ln39lz">
+        <di:waypoint x="1745" y="640" />
+        <di:waypoint x="1810" y="640" />
+        <di:waypoint x="1810" y="800" />
+        <di:waypoint x="1870" y="800" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1778" y="806" width="84" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_00u9lbr_di" bpmnElement="Flow_00u9lbr">
+        <di:waypoint x="1745" y="640" />
+        <di:waypoint x="1808" y="640" />
+        <di:waypoint x="1808" y="550" />
+        <di:waypoint x="1870" y="550" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1782" y="526" width="75" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_13g8qxv_di" bpmnElement="Flow_13g8qxv">
+        <di:waypoint x="1720" y="142" />
+        <di:waypoint x="1720" y="615" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_18p427x_di" bpmnElement="Flow_18p427x">
+        <di:waypoint x="1900" y="117" />
+        <di:waypoint x="1960" y="117" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1837uky_di" bpmnElement="Flow_1837uky">
+        <di:waypoint x="1745" y="117" />
+        <di:waypoint x="1800" y="117" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_10ltgkt_di" bpmnElement="Flow_10ltgkt">
+        <di:waypoint x="1640" y="117" />
+        <di:waypoint x="1695" y="117" />
+      </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_1m79qls_di" bpmnElement="Flow_1m79qls">
         <di:waypoint x="1340" y="140" />
         <di:waypoint x="1368" y="140" />
@@ -364,62 +420,6 @@
         <di:waypoint x="890" y="400" />
         <di:waypoint x="890" y="160" />
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_10ltgkt_di" bpmnElement="Flow_10ltgkt">
-        <di:waypoint x="1640" y="117" />
-        <di:waypoint x="1695" y="117" />
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_1837uky_di" bpmnElement="Flow_1837uky">
-        <di:waypoint x="1745" y="117" />
-        <di:waypoint x="1800" y="117" />
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_18p427x_di" bpmnElement="Flow_18p427x">
-        <di:waypoint x="1900" y="117" />
-        <di:waypoint x="1960" y="117" />
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_13g8qxv_di" bpmnElement="Flow_13g8qxv">
-        <di:waypoint x="1720" y="142" />
-        <di:waypoint x="1720" y="615" />
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_00u9lbr_di" bpmnElement="Flow_00u9lbr">
-        <di:waypoint x="1745" y="640" />
-        <di:waypoint x="1808" y="640" />
-        <di:waypoint x="1808" y="550" />
-        <di:waypoint x="1870" y="550" />
-        <bpmndi:BPMNLabel>
-          <dc:Bounds x="1782" y="526" width="75" height="27" />
-        </bpmndi:BPMNLabel>
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_0ln39lz_di" bpmnElement="Flow_0ln39lz">
-        <di:waypoint x="1745" y="640" />
-        <di:waypoint x="1810" y="640" />
-        <di:waypoint x="1810" y="800" />
-        <di:waypoint x="1870" y="800" />
-        <bpmndi:BPMNLabel>
-          <dc:Bounds x="1778" y="806" width="84" height="27" />
-        </bpmndi:BPMNLabel>
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_04nilpy_di" bpmnElement="Flow_04nilpy">
-        <di:waypoint x="1970" y="800" />
-        <di:waypoint x="2065" y="800" />
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_0i2kdih_di" bpmnElement="Flow_0i2kdih">
-        <di:waypoint x="2060" y="117" />
-        <di:waypoint x="2190" y="117" />
-        <di:waypoint x="2190" y="775" />
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_0yfo170_di" bpmnElement="Flow_0yfo170">
-        <di:waypoint x="2115" y="800" />
-        <di:waypoint x="2165" y="800" />
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_1joor0o_di" bpmnElement="Flow_1joor0o">
-        <di:waypoint x="2215" y="800" />
-        <di:waypoint x="2242" y="800" />
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_0qde7oe_di" bpmnElement="Flow_0qde7oe">
-        <di:waypoint x="1970" y="550" />
-        <di:waypoint x="2090" y="550" />
-        <di:waypoint x="2090" y="775" />
-      </bpmndi:BPMNEdge>
       <bpmndi:BPMNShape id="Event_00cn9ly_di" bpmnElement="StartEvent_1">
         <dc:Bounds x="272" y="99" width="36" height="36" />
         <bpmndi:BPMNLabel>
@@ -482,6 +482,9 @@
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Event_1f0pjzr_di" bpmnElement="Event_1f0pjzr">
         <dc:Bounds x="2242" y="782" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="2232" y="825" width="57" height="27" />
+        </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Gateway_1sjqujv_di" bpmnElement="Gateway_1xbj3t7" isMarkerVisible="true">
         <dc:Bounds x="2065" y="775" width="50" height="50" />
